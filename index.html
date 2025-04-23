@@ -7,30 +7,36 @@
     body {
       font-family: sans-serif;
       text-align: center;
-      padding: 30px;
+      padding: 40px;
     }
     .slider {
       width: 300px;
-      margin: 20px auto;
+      margin: 30px auto;
     }
     audio {
-      display: block;
-      margin: 20px auto;
+      display: none;
     }
     .label {
       font-size: 18px;
       margin-top: 10px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin-top: 20px;
     }
   </style>
 </head>
 <body>
 
   <h2>청소기 소리 볼륨 체험</h2>
-  <audio id="vacuumAudio" src="청소기_소리.mp3" loop></audio>
-  <button onclick="togglePlay()">재생 / 일시정지</button>
+  <p>슬라이더로 볼륨을 조절하며 청소기 소리를 들어보세요!</p>
+
+  <audio id="vacuumAudio" src="vacuum.mp3" loop></audio>
+  <button onclick="togglePlay()">▶ 재생 / ⏸ 정지</button>
 
   <div class="slider">
-    <input type="range" min="-10" max="40" step="5" value="40" id="volumeSlider" oninput="updateVolume(this.value)">
+    <input type="range" min="-10" max="80" step="5" value="40" id="volumeSlider" oninput="updateVolume(this.value)">
     <div class="label">볼륨: <span id="volumeLabel">40</span> dB</div>
   </div>
 
@@ -40,7 +46,9 @@
 
     function togglePlay() {
       if (audio.paused) {
-        audio.play();
+        audio.play().catch(err => {
+          alert("브라우저에서 자동 재생이 차단됐어요. 버튼을 다시 눌러주세요.");
+        });
       } else {
         audio.pause();
       }
@@ -48,13 +56,13 @@
 
     function updateVolume(db) {
       volumeLabel.textContent = db;
-      // dB를 0~1 볼륨으로 변환 (간단화된 로그 변환)
-      let volume = Math.pow(10, (db - 40) / 20); // 40dB 기준
-      volume = Math.min(Math.max(volume, 0), 1); // 0~1 사이로 제한
+      // 데시벨 → 실제 볼륨으로 변환 (80 기준)
+      let volume = Math.pow(10, (db - 80) / 20);
+      volume = Math.min(Math.max(volume, 0), 1);
       audio.volume = volume;
     }
 
-    // 초기 볼륨 세팅
+    // 초기 볼륨 설정
     updateVolume(40);
   </script>
 
